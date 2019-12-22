@@ -1,0 +1,34 @@
+language: c
+
+matrix:
+    include:
+        os: linux
+
+        addons:
+          apt:
+            packages:
+              - make
+
+        script:
+          - ./bootstrap
+          - ./configure
+          - make
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "lsSnMMz9mM3YMPUdw2rXJdISUO9Hf4LsrUIs4nv4IaMvyea7uv4LMxlrdS/YxAhDTv7UhpjWhWp5HEUcrCsOgVewBk5qSHGqhj7ZPIYxYMLedZRhoWUZxuaKJHg8gOfY0mdAAhThij3V3teeUVPcFb0h5YS/6gyY0iuOXJK77qfiZ5qZeyGUX4ADFQ9I5Asd71IT1A/NOqjKOTy/cB867CxGUTkCC9LYNAXwmMzzVmJuw5XJR5kGUSw5elJ1gR1psrBnpY+G/iPeJQyToqORDfry+FLtNZEB+xcyInPaHexr1mOUkmmHwDUR4LmgXYmpBLObFppyemE/NgTSNUGHsvLKPhgCyj412dmKgdRaIZtkUWd8Rv7OQWdkOjaULJGBBx4Ow3YVuvjES5Y2eoLgmtLx0EUj+iPt2v7lBOoF8tenbyA0mXlOTtqzH+dAm/IPt+xWy4WTJIiOg/IaMdwwUMbTPPRi0xL10AWvaa+2kfHpSfNF3/JzNOsliqWmRoQgF/l/PVfSzZiVeX1rRAM9cM0KomwX4CKl0agBvy0dHefFq5YX+ovhSUKqNMjhLPvqo5/st+Ks+xkHEbD3GjTfIQnRIRUKEzv2QOMLMx54SYhImOs6b+ObU1Z23NiNqhTxV5BjWex3g6zNW5pTY7l1ZpDA2ZCqaaUQP0qqLfllCWc="
+
+before_install:
+  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
+addons:
+  coverity_scan:
+    project:
+      name: "oocd/openocd"
+      description: "Open OCD"
+    notification_email: linux@rempel-privat.de
+    build_command_prepend: "./bootstrap && ./configure"
+    build_command: "make"
+    branch_pattern: coverity_scan
